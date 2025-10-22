@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Happy Bhai Dooj 💖</title>
+  <style>
+    * {margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif;}
+    body {
+      overflow: hidden; 
+      background: linear-gradient(135deg, #ffe3ec, #d7f8ff);
+      display: flex; justify-content: center; align-items: center;
+      height: 100vh; flex-direction: column;
+      transition: background 1s ease;
+    }
+    h1, h2, p {text-align: center;}
+
+    /* ===== Landing Page ===== */
+    .landing {
+      text-align: center;
+      animation: fadeIn 2s ease-in;
+    }
+    .landing h1 {
+      font-size: 2.5em; 
+      color: #ff2b75;
+      animation: float 2s infinite alternate ease-in-out;
+    }
+    .start-btn {
+      background: #ff2b75; color: white; padding: 12px 30px;
+      border-radius: 25px; border: none; font-size: 1.1em;
+      cursor: pointer; margin-top: 20px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      transition: transform 0.3s ease;
+    }
+    .start-btn:hover {transform: scale(1.1);}
+    @keyframes float {
+      0% {transform: translateY(0);}
+      100% {transform: translateY(-12px);}
+    }
+    @keyframes fadeIn {
+      from {opacity: 0;}
+      to {opacity: 1;}
+    }
+
+    /* ===== Puzzle Page ===== */
+    .puzzle {
+      display: none;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 15px;
+      max-width: 400px;
+      padding: 20px;
+    }
+    .puzzle h2 {
+      width: 100%;
+      text-align: center;
+      margin-bottom: 10px;
+      color: #ff2b75;
+    }
+    .card {
+      width: 100px; height: 130px;
+      perspective: 1000px;
+      cursor: pointer;
+    }
+    .inner {
+      position: relative;
+      width: 100%; height: 100%;
+      transition: transform 0.8s;
+      transform-style: preserve-3d;
+    }
+    .card.clicked .inner {transform: rotateY(180deg);}
+    .front, .back {
+      position: absolute; width: 100%; height: 100%;
+      backface-visibility: hidden;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: bold; font-size: 1em;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    .front {background: white; color: #ff2b75;}
+    .back {background: #ff2b75; color: white; transform: rotateY(180deg);}
+
+    /* ===== Letter Page ===== */
+    .letter {
+      display: none;
+      text-align: center;
+      width: 85%; max-width: 500px;
+      background: #fff;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      animation: openPaper 1.5s ease;
+    }
+    @keyframes openPaper {
+      0% {transform: scaleY(0); opacity: 0;}
+      100% {transform: scaleY(1); opacity: 1;}
+    }
+    .typing {
+      border-right: 2px solid #ff2b75;
+      white-space: pre-wrap;
+      overflow: hidden;
+      font-size: 1em;
+      color: #333;
+      line-height: 1.5em;
+    }
+    .heart {
+      color: #ff2b75;
+      font-size: 1.8em;
+      animation: beat 1s infinite;
+    }
+    @keyframes beat {
+      0%,100% {transform: scale(1);}
+      50% {transform: scale(1.3);}
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 🎵 Background Music -->
+  <audio id="bgMusic" src="YOUR_MUSIC_URL_HERE.mp3" loop></audio>
+
+  <!-- 🌸 Landing Page -->
+  <div class="landing" id="landing">
+    <h1>Happy Bhai Dooj 💖</h1>
+    <button class="start-btn" onclick="startGame()">Start Surprise 🎁</button>
+  </div>
+
+  <!-- 🎁 Puzzle Game -->
+  <div class="puzzle" id="puzzle">
+    <h2>Pick Your Gifts 🎀</h2>
+  </div>
+
+  <!-- 💌 Letter -->
+  <div class="letter" id="letter">
+    <h2>💌 A Letter For You 💌</h2>
+    <p class="typing" id="typedText"></p>
+    <p class="heart">❤️</p>
+  </div>
+
+  <script>
+    const landingDiv = document.getElementById('landing');
+    const puzzleDiv = document.getElementById('puzzle');
+    const letterDiv = document.getElementById('letter');
+    const music = document.getElementById('bgMusic');
+
+    const gifts = ["A Hug 🤗", "Chocolate 🍫", "Smile 😊", "Blessing 🌸", "Surprise 🎊", "Love 💖"];
+    let clicked = 0;
+
+    function startGame() {
+      landingDiv.style.display = 'none';
+      puzzleDiv.style.display = 'flex';
+      document.body.style.background = "linear-gradient(135deg, #ffd6e0, #c9f1ff)";
+      createCards();
+
+      // 🎵 Play background music (browser-friendly)
+      music.volume = 0.4;
+      music.play().catch(() => {
+        document.body.addEventListener('click', () => music.play(), { once: true });
+      });
+    }
+
+    function createCards() {
+      gifts.forEach((gift, i) => {
+        const card = document.createElement('div');
+        card.classList.add('card');
+        card.innerHTML = `
+          <div class="inner">
+            <div class="front">Gift ${i + 1}</div>
+            <div class="back">${gift}</div>
+          </div>`;
+        card.onclick = () => {
+          if (!card.classList.contains('clicked')) {
+            card.classList.add('clicked');
+            clicked++;
+            if (clicked === gifts.length) setTimeout(showLetter, 1500);
+          }
+        };
+        puzzleDiv.appendChild(card);
+      });
+    }
+
+    function showLetter() {
+      puzzleDiv.style.display = 'none';
+      letterDiv.style.display = 'block';
+      document.body.style.background = "linear-gradient(135deg, #fff3f8, #e4faff)";
+      typeLetter();
+    }
+
+    function typeLetter() {
+      const msg = `My Lovely Sister 💖\n\nYou’ve always been more than family to me — my sister from another mother, my friend, and my biggest supporter.\n\nThank you for all your love, laughter, and care.\n\nHappy Bhai Dooj! 🎊\n\nWith endless love,\nDeepak 💫`;
+      let i = 0;
+      const speed = 40;
+      function type() {
+        if (i < msg.length) {
+          document.getElementById("typedText").textContent += msg.charAt(i);
+          i++;
+          setTimeout(type, speed);
+        }
+      }
+      type();
+    }
+  </script>
+</body>
+</html>
